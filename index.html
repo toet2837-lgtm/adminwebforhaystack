@@ -38,10 +38,9 @@
       width: 100%;
       max-width: 760px;
       margin: auto;
-      display: none; /* Login ဝင်ပြီးမှ ပေါ်မည် */
+      display: none;
     }
 
-    /* ================= LOGIN & MODAL ================= */
     .auth-overlay, .modal-overlay {
       position: fixed;
       inset: 0;
@@ -55,7 +54,7 @@
     }
 
     .modal-overlay {
-      display: none; /* Default Hidden */
+      display: none;
     }
 
     .auth-card {
@@ -64,7 +63,7 @@
       border-radius: 20px;
       padding: 30px 24px;
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
@@ -75,7 +74,7 @@
       border-radius: 20px;
       padding: 24px;
       width: 100%;
-      max-width: 500px;
+      max-width: 580px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       position: relative;
       max-height: 90vh;
@@ -98,27 +97,54 @@
     .auth-sub {
       color: var(--muted);
       font-size: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       text-align: center;
     }
 
-    /* TAB NAVIGATION IN SETTINGS & AUTH */
+    .auth-toggle-bar {
+      display: flex;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 16px;
+    }
+
+    .auth-toggle-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .auth-toggle-btn.active {
+      background: var(--blue);
+      color: #000;
+    }
+
     .tab-nav {
       display: flex;
       gap: 6px;
       border-bottom: 1px solid var(--border);
       margin-bottom: 16px;
       padding-bottom: 8px;
+      overflow-x: auto;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 8px;
+      white-space: nowrap;
+      padding: 8px 12px;
       background: var(--card2);
       border: 1px solid var(--border);
       color: var(--muted);
       border-radius: 10px;
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
       font-weight: 700;
     }
@@ -211,17 +237,16 @@
       cursor: pointer;
     }
 
-    /* TERMS LIST STYLES */
-    .terms-list {
+    .terms-list, .codes-list, .logs-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
       margin-bottom: 15px;
-      max-height: 200px;
+      max-height: 250px;
       overflow-y: auto;
     }
 
-    .term-item {
+    .term-item, .code-item, .log-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -232,7 +257,28 @@
       font-size: 12px;
     }
 
-    .btn-del-term {
+    .log-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 11px;
+      color: var(--blue);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 3px;
+    }
+
+    .log-time {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .btn-del-term, .btn-del-code {
       background: rgba(248,113,113,.15);
       border: 1px solid rgba(248,113,113,.3);
       color: var(--red);
@@ -242,7 +288,15 @@
       font-size: 11px;
     }
 
-    /* ================= HEADER ================= */
+    .code-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .code-active { background: rgba(74,222,128,0.15); color: var(--green); }
+    .code-used { background: rgba(148,163,184,0.15); color: var(--muted); }
+
     .header {
       display: flex;
       align-items: center;
@@ -275,8 +329,9 @@
     }
 
     .header small {
-      color: var(--muted);
-      font-size: 11px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: bold;
     }
 
     .header-right {
@@ -322,7 +377,6 @@
       cursor: pointer;
     }
 
-    /* ================= STATS ================= */
     .stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -344,329 +398,81 @@
       align-items: center;
     }
 
-    .stat-icon {
-      font-size: 18px;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 11px;
-      margin-bottom: 5px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--blue);
-    }
+    .stat-icon { font-size: 18px; }
+    .stat-label { color: var(--muted); font-size: 11px; margin-bottom: 5px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: var(--blue); }
 
     .stat-card.green .stat-value { color: var(--green); }
     .stat-card.yellow .stat-value { color: var(--yellow); }
     .stat-card.orange .stat-value { color: var(--orange); }
     .stat-card.red .stat-value { color: var(--red); }
 
-    /* ================= SEARCH ================= */
-    .search-box {
-      position: relative;
-      margin-bottom: 14px;
-    }
-
+    .search-box { position: relative; margin-bottom: 14px; }
     .search-input {
-      width: 100%;
-      height: 48px;
-      padding: 0 45px 0 44px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      color: white;
-      outline: none;
-      font-size: 13px;
+      width: 100%; height: 48px; padding: 0 45px 0 44px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 13px; color: white; outline: none; font-size: 13px;
     }
 
-    .search-input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(56,189,248,.1);
-    }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .clear-search { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--muted); font-size: 17px; cursor: pointer; display: none; }
 
-    .search-icon {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-    }
-
-    .clear-search {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      font-size: 17px;
-      cursor: pointer;
-      display: none;
-    }
-
-    /* ================= FILTER ================= */
-    .filter-bar {
-      display: flex;
-      gap: 7px;
-      overflow-x: auto;
-      padding-bottom: 5px;
-      margin-bottom: 16px;
-      scrollbar-width: none;
-    }
-
-    .filter-bar::-webkit-scrollbar {
-      display: none;
-    }
+    .filter-bar { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 16px; scrollbar-width: none; }
+    .filter-bar::-webkit-scrollbar { display: none; }
 
     .filter-btn {
-      flex: 0 0 auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      cursor: pointer;
+      flex: 0 0 auto; background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); padding: 7px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
     }
 
-    .filter-btn.active {
-      background: rgba(56,189,248,.12);
-      border-color: var(--blue);
-      color: var(--blue);
-    }
+    .filter-btn.active { background: rgba(56,189,248,.12); border-color: var(--blue); color: var(--blue); }
 
-    /* ================= ORDER CARD ================= */
     .order-card {
-      background: rgba(17,24,39,.96);
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      padding: 15px;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.18);
+      background: rgba(17,24,39,.96); border: 1px solid var(--border);
+      border-radius: 17px; padding: 15px; margin-bottom: 12px; box-shadow: 0 8px 25px rgba(0,0,0,.18);
     }
 
     .order-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      padding-bottom: 11px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 11px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 10px; padding-bottom: 11px; border-bottom: 1px solid var(--border); margin-bottom: 11px;
     }
 
-    .order-id {
-      color: var(--blue);
-      font-weight: 700;
-      font-size: 14px;
-    }
+    .order-id { color: var(--blue); font-weight: 700; font-size: 14px; }
+    .platform { color: #64748b; font-size: 10px; margin-left: 4px; }
+    .order-price { color: var(--green); font-weight: 700; font-size: 14px; white-space: nowrap; }
 
-    .platform {
-      color: #64748b;
-      font-size: 10px;
-      margin-left: 4px;
-    }
-
-    .order-price {
-      color: var(--green);
-      font-weight: 700;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-
-    /* STATUS */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 5px;
-      padding: 3px 8px;
-      border-radius: 20px;
-      font-size: 10px;
-    }
-
+    .status-badge { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; padding: 3px 8px; border-radius: 20px; font-size: 10px; }
     .status-pending { color: var(--yellow); background: rgba(250,204,21,.1); }
     .status-transit { color: var(--blue); background: rgba(56,189,248,.1); }
     .status-completed { color: var(--green); background: rgba(74,222,128,.1); }
     .status-cancelled { color: var(--red); background: rgba(248,113,113,.1); }
 
-    /* ================= INFO ================= */
-    .info-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
+    .info-grid { display: flex; flex-direction: column; gap: 7px; }
+    .info-row { display: flex; align-items: flex-start; gap: 10px; background: var(--card2); border: 1px solid rgba(255,255,255,.025); padding: 9px 10px; border-radius: 10px; }
+    .label { color: var(--muted); font-size: 11px; min-width: 105px; }
+    .value { color: #e2e8f0; font-size: 12px; font-weight: 700; text-align: right; flex: 1; word-break: break-word; }
 
-    .info-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      background: var(--card2);
-      border: 1px solid rgba(255,255,255,.025);
-      padding: 9px 10px;
-      border-radius: 10px;
-    }
+    .call-btn { display: inline-flex; align-items: center; margin-left: 5px; padding: 3px 7px; border-radius: 6px; background: rgba(2,132,199,.18); border: 1px solid rgba(2,132,199,.3); color: #7dd3fc; text-decoration: none; font-size: 10px; }
 
-    .label {
-      color: var(--muted);
-      font-size: 11px;
-      min-width: 105px;
-    }
+    .order-date { color: #64748b; font-size: 10px; margin-top: 9px; text-align: right; }
+    .action-bar { display: flex; gap: 8px; margin-top: 12px; padding-top: 11px; border-top: 1px dashed var(--border); }
+    .status-select { flex: 1; min-width: 0; background: var(--card2); color: white; border: 1px solid #334155; padding: 9px 10px; border-radius: 9px; font-size: 11px; outline: none; }
+    .btn-delete { background: rgba(239,68,68,.08); color: #fca5a5; border: 1px solid rgba(239,68,68,.25); padding: 8px 12px; border-radius: 9px; cursor: pointer; font-size: 11px; font-weight: 700; }
 
-    .value {
-      color: #e2e8f0;
-      font-size: 12px;
-      font-weight: 700;
-      text-align: right;
-      flex: 1;
-      word-break: break-word;
-    }
+    .no-data { text-align: center; color: var(--muted); background: var(--card); border: 1px dashed var(--border); border-radius: 15px; padding: 35px 15px; font-size: 13px; }
+    .loading { text-align: center; padding: 30px; color: var(--muted); }
+    .spinner { width: 25px; height: 25px; border: 3px solid #334155; border-top-color: var(--blue); border-radius: 50%; margin: 0 auto 10px; animation: spin .8s linear infinite; }
 
-    .call-btn {
-      display: inline-flex;
-      align-items: center;
-      margin-left: 5px;
-      padding: 3px 7px;
-      border-radius: 6px;
-      background: rgba(2,132,199,.18);
-      border: 1px solid rgba(2,132,199,.3);
-      color: #7dd3fc;
-      text-decoration: none;
-      font-size: 10px;
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .call-btn:active { transform: scale(.95); }
+    .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+    .quick-btn { border: 1px solid var(--border); background: var(--card2); color: var(--muted); border-radius: 8px; padding: 7px 4px; font-size: 10px; cursor: pointer; font-weight: 700; }
+    .quick-btn.active { border-color: var(--blue); color: var(--blue); background: rgba(56,189,248,.10); }
+    .quick-btn.cancel { color: var(--red); border-color: rgba(248,113,113,.25); }
+    .order-tools { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:9px; }
+    .copy-id { background:transparent; border:1px solid var(--border); color:var(--muted); padding:4px 8px; border-radius:7px; font-size:10px; cursor:pointer; }
+    .status-help { color:var(--muted); font-size:10px; margin-top:5px; }
 
-    /* ================= DATE ================= */
-    .order-date {
-      color: #64748b;
-      font-size: 10px;
-      margin-top: 9px;
-      text-align: right;
-    }
-
-    /* ================= ACTION ================= */
-    .action-bar {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      padding-top: 11px;
-      border-top: 1px dashed var(--border);
-    }
-
-    .status-select {
-      flex: 1;
-      min-width: 0;
-      background: var(--card2);
-      color: white;
-      border: 1px solid #334155;
-      padding: 9px 10px;
-      border-radius: 9px;
-      font-size: 11px;
-      outline: none;
-    }
-
-    .status-select:focus { border-color: var(--blue); }
-
-    .btn-delete {
-      background: rgba(239,68,68,.08);
-      color: #fca5a5;
-      border: 1px solid rgba(239,68,68,.25);
-      padding: 8px 12px;
-      border-radius: 9px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .btn-delete:active { transform: scale(.95); }
-
-    /* ================= EMPTY ================= */
-    .no-data {
-      text-align: center;
-      color: var(--muted);
-      background: var(--card);
-      border: 1px dashed var(--border);
-      border-radius: 15px;
-      padding: 35px 15px;
-      font-size: 13px;
-    }
-
-    /* ================= LOADING ================= */
-    .loading {
-      text-align: center;
-      padding: 30px;
-      color: var(--muted);
-    }
-
-    .spinner {
-      width: 25px;
-      height: 25px;
-      border: 3px solid #334155;
-      border-top-color: var(--blue);
-      border-radius: 50%;
-      margin: 0 auto 10px;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* ================= EXTRA ADMIN UX ================= */
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 10px;
-    }
-    .quick-btn {
-      border: 1px solid var(--border);
-      background: var(--card2);
-      color: var(--muted);
-      border-radius: 8px;
-      padding: 7px 4px;
-      font-size: 10px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-    .quick-btn.active {
-      border-color: var(--blue);
-      color: var(--blue);
-      background: rgba(56,189,248,.10);
-    }
-    .quick-btn.cancel {
-      color: var(--red);
-      border-color: rgba(248,113,113,.25);
-    }
-    .order-tools {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      margin-top:9px;
-    }
-    .copy-id {
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--muted);
-      padding:4px 8px;
-      border-radius:7px;
-      font-size:10px;
-      cursor:pointer;
-    }
-    .status-help {
-      color:var(--muted);
-      font-size:10px;
-      margin-top:5px;
-    }
-
-    /* ================= MOBILE ================= */
     @media (max-width: 420px) {
       body { padding: 11px; }
       .header h1 { font-size: 17px; }
@@ -682,46 +488,32 @@
 </head>
 <body>
 
-  <!-- LOGIN & SIGNUP MODAL -->
+  <!-- AUTH MODAL -->
   <div class="auth-overlay" id="authOverlay">
     <div class="auth-card">
       <div class="auth-icon">🔒</div>
-      <div class="auth-title">Admin Access</div>
-      <div class="auth-sub">Haystack YBS Delivery Admin Portal</div>
+      <div class="auth-title" id="authCardTitle">Admin Login</div>
+      <div class="auth-sub" id="authCardSub">Admin Email နှင့် Password ရိုက်ထည့်ပါ</div>
 
-      <!-- AUTH TAB BUTTONS -->
-      <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchAuthTab('loginTab', this)">🔑 Login</button>
-        <button class="tab-btn" onclick="switchAuthTab('signupTab', this)">📝 Sign Up</button>
+      <div class="auth-toggle-bar">
+        <button class="auth-toggle-btn active" id="loginToggleBtn" onclick="toggleAuthMode('login')">Login</button>
+        <button class="auth-toggle-btn" id="signupToggleBtn" onclick="toggleAuthMode('signup')">Sign Up</button>
       </div>
 
-      <!-- TAB 1: LOGIN -->
-      <div class="tab-content active" id="loginTab">
-        <form id="authForm" onsubmit="handleLogin(event)">
-          <input type="email" id="emailInput" class="auth-input" placeholder="admin@example.com" autofocus required />
-          <input type="password" id="passInput" class="auth-input" placeholder="••••••••" required />
-          
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; text-align:left; font-size:12px; color:var(--muted);">
-            <input type="checkbox" id="rememberMe" checked style="accent-color: var(--blue); width:16px; height:16px; cursor:pointer;">
-            <label for="rememberMe" style="cursor:pointer;">ငါ့ကို မှတ်ထားပါ (Auto Login)</label>
-          </div>
+      <form id="authForm" onsubmit="handleAuth(event)">
+        <input type="text" id="nameInput" class="auth-input" placeholder="👤 Admin အမည် ရိုက်ထည့်ပါ" style="display:none;" />
+        <input type="email" id="emailInput" class="auth-input" placeholder="admin@example.com" autofocus required />
+        <input type="password" id="passInput" class="auth-input" placeholder="••••••••" required />
+        <input type="text" id="inviteCodeInput" class="auth-input" placeholder="🎟️ Invite Code ရိုက်ထည့်ပါ" style="display:none; text-transform:uppercase;" />
 
-          <button type="submit" class="auth-btn" id="loginBtn">Login ဝင်မည်</button>
-        </form>
-      </div>
+        <div id="rememberBox" style="display:flex; align-items:center; gap:8px; margin-bottom:12px; text-align:left; font-size:12px; color:var(--muted);">
+          <input type="checkbox" id="rememberMe" checked style="accent-color: var(--blue); width:16px; height:16px; cursor:pointer;">
+          <label for="rememberMe" style="cursor:pointer;">ငါ့ကို မှတ်ထားပါ (Auto Login)</label>
+        </div>
 
-      <!-- TAB 2: SIGN UP -->
-      <div class="tab-content" id="signupTab">
-        <form id="signupForm" onsubmit="handleSignup(event)">
-          <input type="text" id="signupNameInput" class="auth-input" placeholder="အမည် (ဥပမာ - မောင်မောင်)" required />
-          <input type="email" id="signupEmailInput" class="auth-input" placeholder="admin@example.com" required />
-          <input type="password" id="signupPassInput" class="auth-input" placeholder="စကားဝှက် (အနည်းဆုံး ၆ လုံး)" minlength="6" required />
-
-          <button type="submit" class="auth-btn" id="signupBtn" style="background: var(--green);">Account သစ်ဆောက်မည်</button>
-        </form>
-      </div>
-
-      <div class="auth-error" id="authError">❌ အချက်အလက် မှားယွင်းနေပါသည်။</div>
+        <button type="submit" class="auth-btn" id="authSubmitBtn">Login ဝင်မည်</button>
+      </form>
+      <div class="auth-error" id="authError"></div>
     </div>
   </div>
 
@@ -730,16 +522,16 @@
     <div class="setting-card">
       <button class="close-modal" onclick="closeSettingModal()">✕</button>
       <div class="auth-icon">⚙️</div>
-      <div class="auth-title">Admin Settings</div>
-      <div class="auth-sub">စနစ်ဆိုင်ရာ ပြင်ဆင်မှုများ ပြုလုပ်ပါ</div>
+      <div class="auth-title">Admin Settings & Logs</div>
+      <div class="auth-sub">စနစ်ဆိုင်ရာ ပြင်ဆင်မှုများနှင့် လုပ်ဆောင်ချက် မှတ်တမ်းများ</div>
 
-      <!-- TAB BUTTONS -->
       <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('pricingTab', this)">💰 ဈေးနှုန်းများ</button>
         <button class="tab-btn" onclick="switchTab('termsTab', this)">📜 စည်းကမ်းချက်များ</button>
+        <button class="tab-btn" onclick="switchTab('codesTab', this)">🎟️ Invite Codes</button>
+        <button class="tab-btn" onclick="switchTab('logsTab', this)">🛡️ Activity Logs</button>
       </div>
 
-      <!-- TAB 1: PRICING SETTINGS -->
       <div class="tab-content active" id="pricingTab">
         <form id="pricingForm" onsubmit="handleSavePricing(event)">
           <div class="form-group">
@@ -758,7 +550,6 @@
         </form>
       </div>
 
-      <!-- TAB 2: TERMS & CONDITIONS -->
       <div class="tab-content" id="termsTab">
         <div class="terms-list" id="termsContainer">
           <div class="loading"><div class="spinner"></div></div>
@@ -772,23 +563,44 @@
         </form>
       </div>
 
+      <div class="tab-content" id="codesTab">
+        <div class="codes-list" id="codesContainer">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+        <form id="addCodeForm" onsubmit="handleAddInviteCode(event)">
+          <div class="form-group">
+            <label class="form-label">Invite Code အသစ်ထည့်ရန်</label>
+            <input type="text" id="newCodeInput" class="setting-input" placeholder="ဥပမာ - VIP2026 သို့မဟုတ် CODE999" required style="text-transform:uppercase;" />
+          </div>
+          <button type="submit" class="setting-btn" style="background:var(--blue); color:#000;">+ Invite Code အသစ်ပေါင်းထည့်မည်</button>
+        </form>
+      </div>
+
+      <div class="tab-content" id="logsTab">
+        <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">
+          🔒 ရက်ပေါင်း ၃၀ ကျော်သော Log များကို စနစ်မှ အလိုအလျောက် သန့်ရှင်းပေးပါသည်။
+        </div>
+        <div class="search-box" style="margin-bottom:10px;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="logSearchInput" class="search-input" placeholder="Admin Name / Action ဖြင့် ရှာရန်..." oninput="filterActivityLogs()" style="height:38px; font-size:12px;">
+        </div>
+        <div class="logs-list" id="logsContainer">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+
       <div class="setting-error" id="settingError"></div>
       <div class="setting-success" id="settingSuccess">✅ အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။</div>
     </div>
   </div>
 
   <div class="container" id="mainContainer">
-    <!-- HEADER -->
     <div class="header">
       <div class="logo-area">
         <div class="logo">📦</div>
         <div>
           <h1>Haystack Admin</h1>
-          <small>YBS Delivery Management</small>
-          <!-- USER NAME DISPLAY -->
-          <div style="font-size: 11px; color: var(--blue); font-weight: bold; margin-top: 2px;">
-            Welcome, <span id="adminDisplayName">Admin</span>
-          </div>
+          <small id="currentAdminName">👤 Admin</small>
         </div>
       </div>
       <div class="header-right">
@@ -800,7 +612,6 @@
       </div>
     </div>
 
-    <!-- STATS -->
     <div class="stats">
       <div class="stat-card">
         <div class="stat-top">
@@ -863,14 +674,12 @@
       </div>
     </div>
 
-    <!-- SEARCH -->
     <div class="search-box">
       <span class="search-icon">🔍</span>
       <input type="text" id="searchInput" class="search-input" placeholder="Order ID / ဖုန်းနံပါတ် / နာမည် ရှာရန်...">
       <button id="clearSearch" class="clear-search" onclick="clearSearch()">✕</button>
     </div>
 
-    <!-- FILTER -->
     <div class="filter-bar">
       <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">အားလုံး</button>
       <button class="filter-btn" data-filter="Pending" onclick="setFilter('Pending', this)">⏳ Pending</button>
@@ -879,7 +688,6 @@
       <button class="filter-btn" data-filter="Cancelled" onclick="setFilter('Cancelled', this)">❌ Cancelled</button>
     </div>
 
-    <!-- ORDERS -->
     <div id="ordersList">
       <div class="loading">
         <div class="spinner"></div>
@@ -891,9 +699,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, setDoc, getDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, setDoc, getDoc, addDoc, arrayUnion, arrayRemove, serverTimestamp, limit, where, getDocs, writeBatch, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    /* ================= FIREBASE INITIALIZATION ================= */
     const firebaseConfig = {
       apiKey: "AIzaSyDnfB7MV6bb-BqE0TRHXE-qbrHYnFQ4D0I",
       authDomain: "heystack-ybs-deli.firebaseapp.com",
@@ -909,10 +716,13 @@
     const db = getFirestore(app);
 
     let allOrders = [];
+    let allRawLogs = [];
     let currentFilter = "all";
+    let authMode = "login";
     let termsUnsubscribe = null;
+    let codesUnsubscribe = null;
+    let logsUnsubscribe = null;
 
-    /* ================= AUTO-FILL SAVED CREDENTIALS ================= */
     window.addEventListener("DOMContentLoaded", () => {
       const savedEmail = localStorage.getItem("rememberedEmail");
       const savedPass = localStorage.getItem("rememberedPass");
@@ -923,26 +733,57 @@
       }
     });
 
-    /* ================= AUTH TAB SWITCH ================= */
-    window.switchAuthTab = function(tabId, btnElement) {
-      const card = btnElement.closest('.auth-card');
-      card.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      card.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btnElement.classList.add('active');
-      document.getElementById("authError").style.display = "none";
+    window.toggleAuthMode = function(mode) {
+      authMode = mode;
+      const title = document.getElementById("authCardTitle");
+      const sub = document.getElementById("authCardSub");
+      const nameInput = document.getElementById("nameInput");
+      const inviteInput = document.getElementById("inviteCodeInput");
+      const submitBtn = document.getElementById("authSubmitBtn");
+      const rememberBox = document.getElementById("rememberBox");
+      const errorMsg = document.getElementById("authError");
+
+      errorMsg.style.display = "none";
+      document.querySelectorAll(".auth-toggle-btn").forEach(btn => btn.classList.remove("active"));
+
+      if (mode === "signup") {
+        document.getElementById("signupToggleBtn").classList.add("active");
+        title.innerText = "Admin Sign Up";
+        sub.innerText = "အချက်အလက်များနှင့် Invite Code ရိုက်ထည့်ပါ";
+        nameInput.style.display = "block";
+        nameInput.required = true;
+        inviteInput.style.display = "block";
+        inviteInput.required = true;
+        rememberBox.style.display = "none";
+        submitBtn.innerText = "အကောင့်သစ် ဖွင့်မည်";
+      } else {
+        document.getElementById("loginToggleBtn").classList.add("active");
+        title.innerText = "Admin Login";
+        sub.innerText = "Admin Email နှင့် Password ရိုက်ထည့်ပါ";
+        nameInput.style.display = "none";
+        nameInput.required = false;
+        inviteInput.style.display = "none";
+        inviteInput.required = false;
+        rememberBox.style.display = "flex";
+        submitBtn.innerText = "Login ဝင်မည်";
+      }
     };
 
-    /* ================= AUTHENTICATION ================= */
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         document.getElementById("authOverlay").style.display = "none";
         document.getElementById("mainContainer").style.display = "block";
         
-        // DISPLAY USER NAME IN HEADER
-        const displayName = user.displayName || user.email.split('@')[0] || "Admin";
-        document.getElementById("adminDisplayName").innerText = displayName;
-
+        let displayName = user.displayName;
+        if (!displayName) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists() && userDoc.data().name) {
+              displayName = userDoc.data().name;
+            }
+          } catch(e) { console.error("User doc fetch error", e); }
+        }
+        document.getElementById("currentAdminName").innerText = "👤 " + (displayName || user.email || "Admin");
         initFirebase();
       } else {
         document.getElementById("authOverlay").style.display = "flex";
@@ -950,114 +791,156 @@
       }
     });
 
-    window.handleLogin = async function(e) {
+    window.handleAuth = async function(e) {
       e.preventDefault();
+      const nameInput = document.getElementById("nameInput");
       const emailInput = document.getElementById("emailInput");
       const passInput = document.getElementById("passInput");
+      const inviteInput = document.getElementById("inviteCodeInput");
       const rememberMe = document.getElementById("rememberMe").checked;
       const errorMsg = document.getElementById("authError");
-      const loginBtn = document.getElementById("loginBtn");
-
-      if (!emailInput || !passInput) return;
-
-      const email = emailInput.value.trim();
-      const password = passInput.value;
-
-      errorMsg.style.display = "none";
-      loginBtn.innerText = "Login ဝင်နေသည်...";
-      loginBtn.disabled = true;
-
-      try {
-        const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
-        await setPersistence(auth, persistenceType);
-
-        if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email);
-          localStorage.setItem("rememberedPass", password);
-        } else {
-          localStorage.removeItem("rememberedEmail");
-          localStorage.removeItem("rememberedPass");
-        }
-
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        console.error("Login Error:", error);
-        loginBtn.innerText = "Login ဝင်မည်";
-        loginBtn.disabled = false;
-
-        if (error.code === 'auth/invalid-credential' ||
-            error.code === 'auth/user-not-found' ||
-            error.code === 'auth/wrong-password') {
-          errorMsg.innerText = "❌ Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။";
-        } else if (error.code === 'auth/too-many-requests') {
-          errorMsg.innerText = "❌ Login ကြိုးစားမှုများလွန်းပါသည်။ ခဏစောင့်ပြီး ပြန်ဝင်ပါ။";
-        } else if (error.code === 'auth/network-request-failed') {
-          errorMsg.innerText = "❌ Firebase ချိတ်ဆက်မှု အချိန်ကြာနေပါသည်။ Internet သို့မဟုတ် VPN ကို စစ်ဆေးပါ။";
-        } else {
-          errorMsg.innerText = "❌ Login ဝင်၍မရပါ: " + (error.message || "အမှားဖြစ်ပွားခဲ့သည်");
-        }
-        errorMsg.style.display = "block";
-      }
-    };
-
-    window.handleSignup = async function(e) {
-      e.preventDefault();
-      const nameInput = document.getElementById("signupNameInput");
-      const emailInput = document.getElementById("signupEmailInput");
-      const passInput = document.getElementById("signupPassInput");
-      const errorMsg = document.getElementById("authError");
-      const signupBtn = document.getElementById("signupBtn");
+      const submitBtn = document.getElementById("authSubmitBtn");
 
       const name = nameInput.value.trim();
       const email = emailInput.value.trim();
       const password = passInput.value;
 
       errorMsg.style.display = "none";
-      signupBtn.innerText = "Account ဆောက်နေသည်...";
-      signupBtn.disabled = true;
+      submitBtn.disabled = true;
 
-      try {
-        // 1. Account ဆောက်ခြင်း
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+      if (authMode === "login") {
+        submitBtn.innerText = "Login ဝင်နေသည်...";
+        try {
+          const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+          await setPersistence(auth, persistenceType);
 
-        // 2. Auth Profile တွင် DisplayName (မောင်မောင်) ထည့်သွင်းခြင်း
-        await updateProfile(user, { displayName: name });
+          if (rememberMe) {
+            localStorage.setItem("rememberedEmail", email);
+            localStorage.setItem("rememberedPass", password);
+          } else {
+            localStorage.removeItem("rememberedEmail");
+            localStorage.removeItem("rememberedPass");
+          }
 
-        // 3. Firestore Database တွင် User Data သွားရောက်သိမ်းဆည်းခြင်း
-        await setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
-          name: name,
-          email: email,
-          role: "admin",
-          createdAt: serverTimestamp()
-        });
-
-      } catch (error) {
-        console.error("Signup Error:", error);
-        signupBtn.innerText = "Account သစ်ဆောက်မည်";
-        signupBtn.disabled = false;
-
-        if (error.code === 'auth/email-already-in-use') {
-          errorMsg.innerText = "❌ ဒီ Email နဲ့ Account ရှိပြီးသားဖြစ်ပါသည်။";
-        } else if (error.code === 'auth/weak-password') {
-          errorMsg.innerText = "❌ Password အနည်းဆုံး ၆ လုံး ရှိရပါမည်။";
-        } else {
-          errorMsg.innerText = "❌ Account ဆောက်၍မရပါ: " + (error.message || "အမှားဖြစ်ပွားခဲ့သည်");
+          await signInWithEmailAndPassword(auth, email, password);
+          await logActivity("LOG_IN", "Admin Dashboard သို့ Login ဝင်ရောက်ခဲ့သည်။");
+        } catch (error) {
+          console.error("Login Error:", error);
+          submitBtn.innerText = "Login ဝင်မည်";
+          submitBtn.disabled = false;
+          errorMsg.innerText = "❌ Login ဝင်၍မရပါ: " + (error.message || "အမှားဖြစ်ပွားခဲ့သည်");
+          errorMsg.style.display = "block";
         }
-        errorMsg.style.display = "block";
+      } else {
+        submitBtn.innerText = "Sign Up ပြုလုပ်နေသည်...";
+        const inviteCode = inviteInput.value.trim().toUpperCase();
+
+        if (!name) {
+          errorMsg.innerText = "❌ Admin အမည် ရိုက်ထည့်ပေးပါ။";
+          errorMsg.style.display = "block";
+          submitBtn.innerText = "အကောင့်သစ် ဖွင့်မည်";
+          submitBtn.disabled = false;
+          return;
+        }
+
+        if (!inviteCode) {
+          errorMsg.innerText = "❌ Invite Code ရိုက်ထည့်ပေးပါ။";
+          errorMsg.style.display = "block";
+          submitBtn.innerText = "အကောင့်သစ် ဖွင့်မည်";
+          submitBtn.disabled = false;
+          return;
+        }
+
+        try {
+          const codeRef = doc(db, "inviteCodes", inviteCode);
+          const codeSnap = await getDoc(codeRef);
+
+          if (!codeSnap.exists()) {
+            throw new Error("Invite Code မှားယွင်းနေပါသည်။");
+          }
+
+          if (codeSnap.data().isUsed) {
+            throw new Error("ဒီ Invite Code ကို အသုံးပြုပြီးသား ဖြစ်ပါသည်။");
+          }
+
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          await updateProfile(user, { displayName: name });
+
+          await setDoc(doc(db, "users", user.uid), {
+            name: name,
+            email: email,
+            role: "admin",
+            createdAt: serverTimestamp()
+          });
+
+          await updateDoc(codeRef, {
+            isUsed: true,
+            usedBy: email,
+            usedByName: name,
+            usedAt: serverTimestamp()
+          });
+
+          await logActivity("SIGN_UP", `Invite Code (${inviteCode}) ဖြင့် Admin အကောင့်သစ် [${name}] ဖွင့်လှစ်ခဲ့သည်။`);
+        } catch (error) {
+          console.error("SignUp Error:", error);
+          submitBtn.innerText = "အကောင့်သစ် ဖွင့်မည်";
+          submitBtn.disabled = false;
+          errorMsg.innerText = "❌ Sign Up မအောင်မြင်ပါ: " + (error.message || "အမှားဖြစ်ပွားခဲ့သည်");
+          errorMsg.style.display = "block";
+        }
       }
     };
 
     window.logout = async function() {
       try {
+        await logActivity("LOG_OUT", "Admin အကောင့်မှ ထွက်ခွာခဲ့သည်။");
         await signOut(auth);
       } catch (error) {
         console.error("Logout Error:", error);
       }
     };
 
-    /* ================= SETTING TAB CONTROL ================= */
+    async function logActivity(actionType, details) {
+      try {
+        const currentUser = auth.currentUser;
+        const adminEmail = currentUser ? (currentUser.displayName || currentUser.email) : "Unknown Admin";
+
+        await addDoc(collection(db, "activityLogs"), {
+          adminEmail: adminEmail,
+          actionType: actionType,
+          details: details,
+          timestamp: serverTimestamp()
+        });
+      } catch (err) {
+        console.error("Failed to record activity log:", err);
+      }
+    }
+
+    // ရက်ပေါင်း ၃၀ ကျော်သော Log များကို အလိုအလျောက် သန့်ရှင်းပေးမည့် Function
+    async function autoCleanOldLogs() {
+      try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const logsCol = collection(db, "activityLogs");
+        const q = query(logsCol, where("timestamp", "<", Timestamp.fromDate(thirtyDaysAgo)));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          const batch = writeBatch(db);
+          snapshot.docs.forEach((docSnap) => {
+            batch.delete(docSnap.ref);
+          });
+          await batch.commit();
+          console.log(`🧹 ရက်ပေါင်း ၃၀ ထက်ဟောင်းသော Log (${snapshot.size}) ခုကို ဖျက်ထုတ်ပြီးပါပြီ။`);
+        }
+      } catch (err) {
+        console.error("Auto clean logs error:", err);
+      }
+    }
+
     window.switchTab = function(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1073,6 +956,8 @@
       document.getElementById("settingSuccess").style.display = "none";
       loadPricingSettings();
       loadTermsSettings();
+      loadInviteCodesSettings();
+      loadActivityLogs();
     };
 
     window.closeSettingModal = function() {
@@ -1090,10 +975,7 @@
     }
 
     function initFirebase() {
-      const ordersQuery = query(
-        collection(db, "orders"),
-        orderBy("createdAt", "desc")
-      );
+      const ordersQuery = collection(db, "orders");
 
       onSnapshot(ordersQuery, (snapshot) => {
         allOrders = [];
@@ -1118,6 +1000,12 @@
           if (status === "Cancelled") { cancelled++; }
         });
 
+        allOrders.sort((a, b) => {
+          const tA = a.createdAt?.seconds || 0;
+          const tB = b.createdAt?.seconds || 0;
+          return tB - tA;
+        });
+
         document.getElementById("totalOrders").innerText = allOrders.length.toLocaleString();
         document.getElementById("totalRevenue").innerText = revenue.toLocaleString() + " ကျပ်";
         document.getElementById("pendingOrders").innerText = pending.toLocaleString();
@@ -1134,7 +1022,6 @@
       });
     }
 
-    /* ================= PRICING MANAGEMENT ================= */
     async function loadPricingSettings() {
       try {
         const docRef = doc(db, "settings", "pricing");
@@ -1169,6 +1056,7 @@
           updatedAt: new Date()
         }, { merge: true });
 
+        await logActivity("UPDATE_PRICING", `Delivery ဈေးနှုန်းများ ပြင်ဆင်ခဲ့သည်: Base Fee ${baseFee}, Weight Rate ${weightRate}, Express ${expressFee}`);
         successMsg.innerText = "✅ ဈေးနှုန်း ပြင်ဆင်ပြီးပါပြီ။";
         successMsg.style.display = "block";
       } catch (err) {
@@ -1177,7 +1065,6 @@
       }
     };
 
-    /* ================= TERMS & CONDITIONS MANAGEMENT ================= */
     function loadTermsSettings() {
       const docRef = doc(db, "settings", "terms");
       if (termsUnsubscribe) termsUnsubscribe();
@@ -1207,6 +1094,8 @@
         await setDoc(doc(db, "settings", "terms"), {
           rules: arrayUnion(newRule)
         }, { merge: true });
+
+        await logActivity("ADD_TERM", `စည်းကမ်းချက် အသစ်ပေါင်းထည့်ခဲ့သည်: "${newRule}"`);
         input.value = "";
       } catch (err) {
         console.error(err);
@@ -1220,13 +1109,144 @@
         await updateDoc(doc(db, "settings", "terms"), {
           rules: arrayRemove(ruleText)
         });
+        await logActivity("DELETE_TERM", `စည်းကမ်းချက် ဖျက်ခဲ့သည်: "${ruleText}"`);
       } catch (err) {
         console.error(err);
         alert("စည်းကမ်းချက် ဖျက်ရာတွင် အမှားဖြစ်ပါသည်: " + err.message);
       }
     };
 
-    /* ================= RENDER ORDERS ================= */
+    function loadInviteCodesSettings() {
+      const codesCol = collection(db, "inviteCodes");
+      if (codesUnsubscribe) codesUnsubscribe();
+      codesUnsubscribe = onSnapshot(codesCol, (snap) => {
+        const container = document.getElementById("codesContainer");
+        if (!snap.empty) {
+          let html = "";
+          snap.forEach((docSnap) => {
+            const data = docSnap.data();
+            const codeId = docSnap.id;
+            const isUsed = data.isUsed === true;
+            const statusBadge = isUsed 
+              ? `<span class="code-badge code-used">USED BY ${escapeHTML(data.usedByName || data.usedBy || 'N/A')}</span>` 
+              : `<span class="code-badge code-active">ACTIVE</span>`;
+
+            html += `
+              <div class="code-item">
+                <div>
+                  <strong>🔑 ${escapeHTML(codeId)}</strong>
+                  ${statusBadge}
+                </div>
+                <button class="btn-del-code" onclick="deleteInviteCode('${escapeHTML(codeId)}')">ဖျက်မည်</button>
+              </div>
+            `;
+          });
+          container.innerHTML = html;
+        } else {
+          container.innerHTML = `<div style="text-align:center; color:var(--muted); font-size:12px; padding:10px;">Invite Code များ မရှိသေးပါ။</div>`;
+        }
+      }, (err) => {
+        console.error("Invite codes load error:", err);
+      });
+    }
+
+    window.handleAddInviteCode = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById("newCodeInput");
+      const newCode = input.value.trim().toUpperCase();
+      if (!newCode) return;
+
+      try {
+        await setDoc(doc(db, "inviteCodes", newCode), {
+          isUsed: false,
+          usedBy: "",
+          usedByName: "",
+          createdAt: serverTimestamp()
+        });
+        await logActivity("ADD_INVITE_CODE", `Invite Code အသစ်ဖန်တီးခဲ့သည်: ${newCode}`);
+        input.value = "";
+      } catch (err) {
+        console.error(err);
+        alert("Invite Code ထည့်သွင်းရာတွင် အမှားဖြစ်ပါသည်: " + err.message);
+      }
+    };
+
+    window.deleteInviteCode = async function(codeId) {
+      if (!confirm(`⚠️ "${codeId}" Invite Code ကို ဖျက်ရန် သေချာပါသလား?`)) return;
+      try {
+        await deleteDoc(doc(db, "inviteCodes", codeId));
+        await logActivity("DELETE_INVITE_CODE", `Invite Code ကို ဖျက်ခဲ့သည်: ${codeId}`);
+      } catch (err) {
+        console.error(err);
+        alert("Invite Code ဖျက်ရာတွင် အမှားဖြစ်ပါသည်: " + err.message);
+      }
+    };
+
+    function loadActivityLogs() {
+      // ၁။ ရက်ပေါင်း ၃၀ ထက်ဟောင်းသော Log များကို Auto CleanUp ပြုလုပ်မည်
+      autoCleanOldLogs();
+
+      // ၂။ နောက်ဆုံး ရေးသားထားသော Log ၁၀၀ ခုကို ဆွဲယူမည်
+      const logsCol = collection(db, "activityLogs");
+      const q = query(logsCol, orderBy("timestamp", "desc"), limit(100));
+
+      if (logsUnsubscribe) logsUnsubscribe();
+      logsUnsubscribe = onSnapshot(q, (snap) => {
+        allRawLogs = [];
+        if (!snap.empty) {
+          snap.forEach((docSnap) => {
+            allRawLogs.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          filterActivityLogs();
+        } else {
+          document.getElementById("logsContainer").innerHTML = `<div style="text-align:center; color:var(--muted); font-size:12px; padding:10px;">Activity Logs မှတ်တမ်း မရှိသေးပါ။</div>`;
+        }
+      }, (err) => {
+        console.error("Logs load error:", err);
+        document.getElementById("logsContainer").innerHTML = `<div style="text-align:center; color:var(--red); font-size:12px; padding:10px;">❌ Error: ${err.message}</div>`;
+      });
+    }
+
+    // Admin Name ရှာဖွေနိုင်သည့် Filter Function
+    window.filterActivityLogs = function() {
+      const searchKey = document.getElementById("logSearchInput").value.toLowerCase().trim();
+      const container = document.getElementById("logsContainer");
+
+      const filteredLogs = allRawLogs.filter(log => {
+        const name = (log.adminEmail || "").toLowerCase();
+        const action = (log.actionType || "").toLowerCase();
+        const details = (log.details || "").toLowerCase();
+        return name.includes(searchKey) || action.includes(searchKey) || details.includes(searchKey);
+      });
+
+      if (filteredLogs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:var(--muted); font-size:12px; padding:10px;">🔍 ရှာဖွေမှုနှင့် ကိုက်ညီသော Log မတွေ့ပါ။</div>`;
+        return;
+      }
+
+      let html = "";
+      filteredLogs.forEach((log) => {
+        let dateStr = "N/A";
+        if (log.timestamp?.toDate) {
+          dateStr = log.timestamp.toDate().toLocaleString("my-MM");
+        }
+
+        html += `
+          <div class="log-item">
+            <div class="log-header">
+              <span>👤 ${escapeHTML(log.adminEmail || "Admin")}</span>
+              <span class="log-time">🕒 ${dateStr}</span>
+            </div>
+            <div>
+              <strong style="color:var(--yellow); font-size:11px;">[${escapeHTML(log.actionType || "ACTION")}]</strong>
+              <span>${escapeHTML(log.details || "")}</span>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    };
+
     function renderOrders(orders) {
       const ordersList = document.getElementById("ordersList");
 
@@ -1377,7 +1397,6 @@
       }).join("");
     }
 
-    /* ================= SEARCH + FILTER ================= */
     document.getElementById("searchInput").addEventListener("input", applyFilters);
 
     function applyFilters() {
@@ -1419,7 +1438,6 @@
       input.focus();
     };
 
-    /* ================= ORDER EVENT TIMES ================= */
     window.markOrderTime = async function(docId, field) {
       const labels = {
         collectedAt: "📥 Order ကောက်ခံချိန်",
@@ -1438,13 +1456,13 @@
         await updateDoc(doc(db, "orders", docId), {
           [field]: serverTimestamp()
         });
+        await logActivity("MARK_TIME", `Order ID (${order?.id || docId}) ၏ ${labels[field]} ကို မှတ်တမ်းတင်ခဲ့သည်။`);
       } catch (error) {
         console.error(error);
         alert("အချိန်မှတ်တမ်းတင်ရာတွင် အမှားဖြစ်ပါသည်။\n\n" + error.message);
       }
     };
 
-    /* ================= UPDATE STATUS ================= */
     window.updateOrderStatus = async function(docId, newStatus, selectElement) {
       const order = allOrders.find(item => item.docId === docId);
       const oldStatus = order?.status || "Pending";
@@ -1470,6 +1488,7 @@
         }
 
         await updateDoc(orderRef, updateData);
+        await logActivity("CHANGE_STATUS", `Order ID (${order?.id || docId}) ၏ Status ကို "${oldStatus}" မှ "${newStatus}" သို့ ပြောင်းလဲခဲ့သည်။`);
       } catch (error) {
         console.error(error);
         alert("Status ပြောင်းရာတွင် အမှားဖြစ်နေပါသည်။\n\n" + error.message);
@@ -1489,7 +1508,6 @@
       }
     };
 
-    /* ================= COD AMOUNT ================= */
     window.updateCodAmount = async function(docId) {
       const input = document.getElementById(`codAmount-${docId}`);
       if (!input) return;
@@ -1506,6 +1524,7 @@
       }
       try {
         await updateDoc(doc(db, 'orders', docId), { codAmount: Math.round(value) });
+        await logActivity("UPDATE_COD", `Order ID (${order?.id || docId}) ၏ COD တန်ဖိုးကို ${value} ကျပ် သို့ ပြောင်းလဲခဲ့သည်။`);
         alert('✅ COD ပစ္စည်းတန်ဖိုး သိမ်းပြီးပါပြီ။');
       } catch (error) {
         console.error(error);
@@ -1513,7 +1532,6 @@
       }
     };
 
-    /* ================= DELIVERY MAN ================= */
     window.updateDeliveryMan = async function(docId) {
       const nameInput = document.getElementById(`deliveryManName-${docId}`);
       const phoneInput = document.getElementById(`deliveryManPhone-${docId}`);
@@ -1521,6 +1539,8 @@
 
       const name = nameInput.value.trim();
       const phone = phoneInput.value.trim();
+      const order = allOrders.find(item => item.docId === docId);
+
       if (!name) {
         alert('Delivery Man အမည် ထည့်ပေးပါ။');
         nameInput.focus();
@@ -1536,6 +1556,7 @@
           deliveryManName: name,
           deliveryManPhone: phone
         });
+        await logActivity("ASSIGN_DELIVERY_MAN", `Order ID (${order?.id || docId}) သို့ Delivery Man [${name} - ${phone}] ကို တာဝန်ပေးအပ်ခဲ့သည်။`);
         alert('✅ Delivery Man အမည် + ဖုန်း သိမ်းပြီးပါပြီ။ Customer ဘက်မှာလည်း Realtime ပြပါမယ်။');
       } catch (error) {
         console.error(error);
@@ -1543,13 +1564,14 @@
       }
     };
 
-    /* ================= DELETE ORDER ================= */
     window.deleteOrderDoc = async function(docId) {
+      const order = allOrders.find(item => item.docId === docId);
       const confirmed = confirm("⚠️ ဒီ Order ကို အပြီးတိုင်ဖျက်မှာ သေချာပါသလား?\n\nဖျက်ပြီးရင် ပြန်ယူလို့မရတော့ပါ။");
       if (!confirmed) { return; }
 
       try {
         await deleteDoc(doc(db, "orders", docId));
+        await logActivity("DELETE_ORDER", `Order ID (${order?.id || docId}) ကို ဖျက်ဆီးခဲ့သည်။ (ပေးပို့သူ: ${order?.senderName || 'N/A'})`);
       } catch (error) {
         console.error(error);
         alert("Order ဖျက်ရာတွင် အမှားဖြစ်နေပါသည်။\n\n" + error.message);
