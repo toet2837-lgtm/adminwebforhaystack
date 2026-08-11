@@ -612,6 +612,11 @@
       </div>
     </div>
 
+    <!-- Order History သက်တမ်းကုန်ဆုံးမှု သတိပေးချက် -->
+    <div style="font-size:11px; color:var(--muted); margin-bottom:12px; background:var(--card); padding:8px 12px; border-radius:10px; border:1px solid var(--border);">
+      🔒 ရက်ပေါင်း ၃၀ ကျော်သော Order History များကို စနစ်မှ အလိုအလျောက် သန့်ရှင်းပေးပါသည်။
+    </div>
+
     <div class="stats">
       <div class="stat-card">
         <div class="stat-top">
@@ -941,6 +946,30 @@
       }
     }
 
+    // ရက်ပေါင်း ၃၀ ကျော်သော Order များကို အလိုအလျောက် သန့်ရှင်းပေးမည့် Function အသစ်
+    async function autoCleanOldOrders() {
+      try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const ordersCol = collection(db, "orders");
+        // createdAt သို့မဟုတ် ဖန်တီးထားသည့် ရက်စွဲအပေါ်မူတည်၍ စစ်ဆေးခြင်း
+        const q = query(ordersCol, where("createdAt", "<", Timestamp.fromDate(thirtyDaysAgo)));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          const batch = writeBatch(db);
+          snapshot.docs.forEach((docSnap) => {
+            batch.delete(docSnap.ref);
+          });
+          await batch.commit();
+          console.log(`🧹 ရက်ပေါင်း ၃၀ ကျော်လွန်သွားသော Order ဟောင်း (${snapshot.size}) ခုကို အလိုအလျောက် ရှင်းလင်းပြီးပါပြီ။`);
+        }
+      } catch (err) {
+        console.error("Auto clean orders error:", err);
+      }
+    }
+
     window.switchTab = function(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -975,6 +1004,9 @@
     }
 
     function initFirebase() {
+      // Order များကို ဝင်ရောက်ကြည့်ရှုချိန်တွင် ရက် ၃၀ ကျော်နေသည်များကို အလိုအလျောက် ရှင်းထုတ်ရန် ခေါ်ယူခြင်း
+      autoCleanOldOrders();
+
       const ordersQuery = collection(db, "orders");
 
       onSnapshot(ordersQuery, (snapshot) => {
@@ -1183,10 +1215,8 @@
     };
 
     function loadActivityLogs() {
-      // ၁။ ရက်ပေါင်း ၃၀ ထက်ဟောင်းသော Log များကို Auto CleanUp ပြုလုပ်မည်
       autoCleanOldLogs();
 
-      // ၂။ နောက်ဆုံး ရေးသားထားသော Log ၁၀၀ ခုကို ဆွဲယူမည်
       const logsCol = collection(db, "activityLogs");
       const q = query(logsCol, orderBy("timestamp", "desc"), limit(100));
 
@@ -1207,7 +1237,6 @@
       });
     }
 
-    // Admin Name ရှာဖွေနိုင်သည့် Filter Function
     window.filterActivityLogs = function() {
       const searchKey = document.getElementById("logSearchInput").value.toLowerCase().trim();
       const container = document.getElementById("logsContainer");
