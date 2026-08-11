@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haystack Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Padauk", sans-serif;
+    }
+
+    :root {
+      --bg: #080d17;
+      --card: #111827;
+      --card2: #0f172a;
+      --border: #243044;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --green: #4ade80;
+      --yellow: #facc15;
+      --orange: #fb923c;
+      --red: #f87171;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #122033 0%, var(--bg) 45%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      margin: auto;
+      display: none; /* Login ဝင်ပြီးမှ ပေါ်မည် */
+    }
+
+    /* ================= LOGIN & MODAL ================= */
+    .auth-overlay, .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 13, 23, 0.95);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+    }
+
+    .modal-overlay {
+      display: none; /* Default Hidden */
+    }
+
+    .auth-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px 24px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .setting-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .auth-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .auth-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .auth-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* TAB NAVIGATION IN SETTINGS */
+    .tab-nav {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab-btn.active {
+      background: rgba(56,189,248,.15);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .auth-input, .setting-input {
+      width: 100%;
+      height: 42px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: white;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .auth-input:focus, .setting-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.15);
+    }
+
+    .auth-btn, .setting-btn {
+      width: 100%;
+      height: 42px;
+      background: var(--blue);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .auth-btn:active, .setting-btn:active {
+      transform: scale(0.98);
+    }
+
+    .auth-error, .setting-error {
+      color: var(--red);
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+      text-align: center;
+    }
+
+    .setting-success {
+      color: var(--green);
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+      text-align: center;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 18px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* TERMS LIST STYLES */
+    .terms-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .term-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .btn-del-term {
+      background: rgba(248,113,113,.15);
+      border: 1px solid rgba(248,113,113,.3);
+      color: var(--red);
+      padding: 2px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    /* ================= HEADER ================= */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding: 8px 2px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(56,189,248,.12);
+      border: 1px solid rgba(56,189,248,.25);
+      font-size: 21px;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .header small {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--green);
+      font-size: 11px;
+      margin-right: 4px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .btn-icon-head {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-logout {
+      background: rgba(248,113,113,.1);
+      border: 1px solid rgba(248,113,113,.25);
+      color: var(--red);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* ================= STATS ================= */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: rgba(17,24,39,.9);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 14px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.18);
+    }
+
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-icon {
+      font-size: 18px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .stat-card.green .stat-value { color: var(--green); }
+    .stat-card.yellow .stat-value { color: var(--yellow); }
+    .stat-card.orange .stat-value { color: var(--orange); }
+    .stat-card.red .stat-value { color: var(--red); }
+
+    /* ================= SEARCH ================= */
+    .search-box {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 45px 0 44px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      color: white;
+      outline: none;
+      font-size: 13px;
+    }
+
+    .search-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 17px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* ================= FILTER ================= */
+    .filter-bar {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      margin-bottom: 16px;
+      scrollbar-width: none;
+    }
+
+    .filter-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      flex: 0 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: rgba(56,189,248,.12);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* ================= ORDER CARD ================= */
+    .order-card {
+      background: rgba(17,24,39,.96);
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.18);
+    }
+
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 11px;
+    }
+
+    .order-id {
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .platform {
+      color: #64748b;
+      font-size: 10px;
+      margin-left: 4px;
+    }
+
+    .order-price {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    /* STATUS */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 5px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+    }
+
+    .status-pending { color: var(--yellow); background: rgba(250,204,21,.1); }
+    .status-transit { color: var(--blue); background: rgba(56,189,248,.1); }
+    .status-completed { color: var(--green); background: rgba(74,222,128,.1); }
+    .status-cancelled { color: var(--red); background: rgba(248,113,113,.1); }
+
+    /* ================= INFO ================= */
+    .info-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,.025);
+      padding: 9px 10px;
+      border-radius: 10px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 11px;
+      min-width: 105px;
+    }
+
+    .value {
+      color: #e2e8f0;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: right;
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .call-btn {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 5px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: rgba(2,132,199,.18);
+      border: 1px solid rgba(2,132,199,.3);
+      color: #7dd3fc;
+      text-decoration: none;
+      font-size: 10px;
+    }
+
+    .call-btn:active { transform: scale(.95); }
+
+    /* ================= DATE ================= */
+    .order-date {
+      color: #64748b;
+      font-size: 10px;
+      margin-top: 9px;
+      text-align: right;
+    }
+
+    /* ================= ACTION ================= */
+    .action-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 11px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .status-select {
+      flex: 1;
+      min-width: 0;
+      background: var(--card2);
+      color: white;
+      border: 1px solid #334155;
+      padding: 9px 10px;
+      border-radius: 9px;
+      font-size: 11px;
+      outline: none;
+    }
+
+    .status-select:focus { border-color: var(--blue); }
+
+    .btn-delete {
+      background: rgba(239,68,68,.08);
+      color: #fca5a5;
+      border: 1px solid rgba(239,68,68,.25);
+      padding: 8px 12px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .btn-delete:active { transform: scale(.95); }
+
+    /* ================= EMPTY ================= */
+    .no-data {
+      text-align: center;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 15px;
+      padding: 35px 15px;
+      font-size: 13px;
+    }
+
+    /* ================= LOADING ================= */
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 25px;
+      height: 25px;
+      border: 3px solid #334155;
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ================= EXTRA ADMIN UX ================= */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .quick-btn {
+      border: 1px solid var(--border);
+      background: var(--card2);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 7px 4px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .quick-btn.active {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: rgba(56,189,248,.10);
+    }
+    .quick-btn.cancel {
+      color: var(--red);
+      border-color: rgba(248,113,113,.25);
+    }
+    .order-tools {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-top:9px;
+    }
+    .copy-id {
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--muted);
+      padding:4px 8px;
+      border-radius:7px;
+      font-size:10px;
+      cursor:pointer;
+    }
+    .status-help {
+      color:var(--muted);
+      font-size:10px;
+      margin-top:5px;
+    }
+
+    /* ================= MOBILE ================= */
+    @media (max-width: 420px) {
+      body { padding: 11px; }
+      .header h1 { font-size: 17px; }
+      .stat-value { font-size: 17px; }
+      .info-row { flex-direction: column; gap: 3px; }
+      .label { min-width: auto; }
+      .value { width: 100%; text-align: left; }
+      .action-bar { flex-direction: column; }
+      .status-select, .btn-delete { width: 100%; }
+      .quick-actions { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN MODAL -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <div class="auth-icon">🔒</div>
+      <div class="auth-title">Admin Access</div>
+      <div class="auth-sub">Firebase Admin Email နှင့် Password ရိုက်ထည့်ပါ</div>
+      <form id="authForm" onsubmit="handleLogin(event)">
+        <input type="email" id="emailInput" class="auth-input" placeholder="admin@example.com" autofocus required />
+        <input type="password" id="passInput" class="auth-input" placeholder="••••••••" required />
+        <button type="submit" class="auth-btn" id="loginBtn">Login ဝင်မည်</button>
+      </form>
+      <div class="auth-error" id="authError">❌ Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။</div>
+    </div>
+  </div>
+
+  <!-- MULTI-SETTING MODAL -->
+  <div class="modal-overlay" id="settingOverlay">
+    <div class="setting-card">
+      <button class="close-modal" onclick="closeSettingModal()">✕</button>
+      <div class="auth-icon">⚙️</div>
+      <div class="auth-title">Admin Settings</div>
+      <div class="auth-sub">စနစ်ဆိုင်ရာ ပြင်ဆင်မှုများ ပြုလုပ်ပါ</div>
+
+      <!-- TAB BUTTONS -->
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('pricingTab', this)">💰 ဈေးနှုန်းများ</button>
+        <button class="tab-btn" onclick="switchTab('termsTab', this)">📜 စည်းကမ်းချက်များ</button>
+      </div>
+
+      <!-- TAB 1: PRICING SETTINGS -->
+      <div class="tab-content active" id="pricingTab">
+        <form id="pricingForm" onsubmit="handleSavePricing(event)">
+          <div class="form-group">
+            <label class="form-label">အခြေခံ Delivery ဈေးနှုန်း (ကျပ်)</label>
+            <input type="number" id="baseFeeInput" class="setting-input" placeholder="1500" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">အလေးချိန် ၁ ကီလိုအပိုအတွက် ဈေးနှုန်း (ကျပ်)</label>
+            <input type="number" id="weightRateInput" class="setting-input" placeholder="500" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Express Delivery အပိုကြေး (ကျပ်)</label>
+            <input type="number" id="expressFeeInput" class="setting-input" placeholder="1000" required />
+          </div>
+          <button type="submit" class="setting-btn">ဈေးနှုန်း အသစ်ပြင်မည်</button>
+        </form>
+      </div>
+
+      <!-- TAB 2: TERMS & CONDITIONS -->
+      <div class="tab-content" id="termsTab">
+        <div class="terms-list" id="termsContainer">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+        <form id="addTermForm" onsubmit="handleAddTerm(event)">
+          <div class="form-group">
+            <label class="form-label">စည်းကမ်းချက် အသစ်ထည့်ရန်</label>
+            <input type="text" id="newTermInput" class="setting-input" placeholder="ဥပမာ - မှန်ကွဲလွယ်သော ပစ္စည်းများ ပို့ဆောင်မပေးပါ။" required />
+          </div>
+          <button type="submit" class="setting-btn" style="background:var(--green); color:#000;">+ စည်းကမ်းချက် အသစ်ပေါင်းထည့်မည်</button>
+        </form>
+      </div>
+
+      <div class="setting-error" id="settingError"></div>
+      <div class="setting-success" id="settingSuccess">✅ အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။</div>
+    </div>
+  </div>
+
+  <div class="container" id="mainContainer">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="logo-area">
+        <div class="logo">📦</div>
+        <div>
+          <h1>Haystack Admin</h1>
+          <small>YBS Delivery Management</small>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="live">
+          <span class="live-dot"></span> LIVE
+        </div>
+        <button class="btn-icon-head" onclick="openSettingModal()" title="Setting">⚙️ Settings</button>
+        <button class="btn-logout" onclick="logout()" title="Logout">🚪</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">စုစုပေါင်း Order</div>
+            <div class="stat-value" id="totalOrders">0</div>
+          </div>
+          <div class="stat-icon">📦</div>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">စုစုပေါင်း ရရှိငွေ</div>
+            <div class="stat-value" id="totalRevenue">0</div>
+          </div>
+          <div class="stat-icon">💰</div>
+        </div>
+      </div>
+
+      <div class="stat-card yellow">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">Pending</div>
+            <div class="stat-value" id="pendingOrders">0</div>
+          </div>
+          <div class="stat-icon">⏳</div>
+        </div>
+      </div>
+
+      <div class="stat-card orange">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">In Transit</div>
+            <div class="stat-value" id="transitOrders">0</div>
+          </div>
+          <div class="stat-icon">🚚</div>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">Completed</div>
+            <div class="stat-value" id="completedOrders">0</div>
+          </div>
+          <div class="stat-icon">✅</div>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">Cancelled</div>
+            <div class="stat-value" id="cancelledOrders">0</div>
+          </div>
+          <div class="stat-icon">❌</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Order ID / ဖုန်းနံပါတ် / နာမည် ရှာရန်...">
+      <button id="clearSearch" class="clear-search" onclick="clearSearch()">✕</button>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">အားလုံး</button>
+      <button class="filter-btn" data-filter="Pending" onclick="setFilter('Pending', this)">⏳ Pending</button>
+      <button class="filter-btn" data-filter="In Transit" onclick="setFilter('In Transit', this)">🚚 Transfer</button>
+      <button class="filter-btn" data-filter="Completed" onclick="setFilter('Completed', this)">✅ Completed</button>
+      <button class="filter-btn" data-filter="Cancelled" onclick="setFilter('Cancelled', this)">❌ Cancelled</button>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="ordersList">
+      <div class="loading">
+        <div class="spinner"></div>
+        Data များကို ဆွဲယူနေပါသည်...
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, setDoc, getDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    /* ================= FIREBASE INITIALIZATION ================= */
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnfB7MV6bb-BqE0TRHXE-qbrHYnFQ4D0I",
+      authDomain: "heystack-ybs-deli.firebaseapp.com",
+      projectId: "heystack-ybs-deli",
+      storageBucket: "heystack-ybs-deli.firebasestorage.app",
+      messagingSenderId: "961467761736",
+      appId: "1:961467761736:web:4c967d6828d563d68e047d",
+      measurementId: "G-YZHWL84HWX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let allOrders = [];
+    let currentFilter = "all";
+    let termsUnsubscribe = null;
+
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
+
+    /* ================= AUTHENTICATION ================= */
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById("authOverlay").style.display = "none";
+        document.getElementById("mainContainer").style.display = "block";
+        initFirebase();
+      } else {
+        document.getElementById("authOverlay").style.display = "flex";
+        document.getElementById("mainContainer").style.display = "none";
+      }
+    });
+
+    window.handleLogin = async function(e) {
+      e.preventDefault();
+      const emailInput = document.getElementById("emailInput");
+      const passInput = document.getElementById("passInput");
+      const errorMsg = document.getElementById("authError");
+      const loginBtn = document.getElementById("loginBtn");
+
+      if (!emailInput || !passInput) return;
+
+      const email = emailInput.value.trim();
+      const password = passInput.value;
+
+      errorMsg.style.display = "none";
+      loginBtn.innerText = "Login ဝင်နေသည်...";
+      loginBtn.disabled = true;
+
+      try {
+        const loginPromise = signInWithEmailAndPassword(auth, email, password);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(Object.assign(new Error("NETWORK_TIMEOUT"), { code: "auth/network-timeout" })), 15000)
+        );
+        await Promise.race([loginPromise, timeoutPromise]);
+      } catch (error) {
+        console.error("Login Error:", error);
+        loginBtn.innerText = "Login ဝင်မည်";
+        loginBtn.disabled = false;
+
+        if (error.code === 'auth/invalid-credential' ||
+            error.code === 'auth/user-not-found' ||
+            error.code === 'auth/wrong-password') {
+          errorMsg.innerText = "❌ Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။";
+        } else if (error.code === 'auth/too-many-requests') {
+          errorMsg.innerText = "❌ Login ကြိုးစားမှုများလွန်းပါသည်။ ခဏစောင့်ပြီး ပြန်ဝင်ပါ။";
+        } else if (error.code === 'auth/network-request-failed' ||
+                   error.code === 'auth/network-timeout') {
+          errorMsg.innerText = "❌ Firebase ချိတ်ဆက်မှု အချိန်ကြာနေပါသည်။ Internet သို့မဟုတ် VPN ကို စစ်ဆေးပါ။";
+        } else {
+          errorMsg.innerText = "❌ Login ဝင်၍မရပါ: " + (error.message || "အမှားဖြစ်ပွားခဲ့သည်");
+        }
+        errorMsg.style.display = "block";
+      }
+    };
+
+    window.logout = async function() {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Logout Error:", error);
+      }
+    };
+
+    /* ================= SETTING TAB CONTROL ================= */
+    window.switchTab = function(tabId, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+      document.getElementById("settingError").style.display = "none";
+      document.getElementById("settingSuccess").style.display = "none";
+    };
+
+    window.openSettingModal = function() {
+      document.getElementById("settingOverlay").style.display = "flex";
+      document.getElementById("settingError").style.display = "none";
+      document.getElementById("settingSuccess").style.display = "none";
+      loadPricingSettings();
+      loadTermsSettings();
+    };
+
+    window.closeSettingModal = function() {
+      document.getElementById("settingOverlay").style.display = "none";
+    };
+
+    function escapeHTML(value) {
+      if (value === null || value === undefined) { return ""; }
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function initFirebase() {
+      const ordersQuery = query(
+        collection(db, "orders"),
+        orderBy("createdAt", "desc")
+      );
+
+      onSnapshot(ordersQuery, (snapshot) => {
+        allOrders = [];
+        let revenue = 0;
+        let pending = 0;
+        let transit = 0;
+        let completed = 0;
+        let cancelled = 0;
+
+        snapshot.forEach((docSnapshot) => {
+          const item = docSnapshot.data();
+          const order = { docId: docSnapshot.id, ...item };
+          allOrders.push(order);
+
+          const rawPrice = String(item.price || "0").replace(/[^0-9]/g, "");
+          revenue += parseInt(rawPrice) || 0;
+
+          const status = item.status || "Pending";
+          if (status === "Pending") { pending++; }
+          if (status === "In Transit" || status === "Transfer") { transit++; }
+          if (status === "Completed") { completed++; }
+          if (status === "Cancelled") { cancelled++; }
+        });
+
+        document.getElementById("totalOrders").innerText = allOrders.length.toLocaleString();
+        document.getElementById("totalRevenue").innerText = revenue.toLocaleString() + " ကျပ်";
+        document.getElementById("pendingOrders").innerText = pending.toLocaleString();
+        document.getElementById("transitOrders").innerText = transit.toLocaleString();
+        document.getElementById("completedOrders").innerText = completed.toLocaleString();
+        document.getElementById("cancelledOrders").innerText = cancelled.toLocaleString();
+
+        applyFilters();
+      }, (error) => {
+        console.error(error);
+        document.getElementById("ordersList").innerHTML = `
+          <div class="no-data">❌ Data ရယူ၍မရပါ။ <br><br> Firebase connection သို့မဟုတ် Permission ကို စစ်ဆေးပါ။</div>
+        `;
+      });
+    }
+
+    /* ================= PRICING MANAGEMENT ================= */
+    async function loadPricingSettings() {
+      try {
+        const docRef = doc(db, "settings", "pricing");
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          document.getElementById("baseFeeInput").value = data.baseFee || 1500;
+          document.getElementById("weightRateInput").value = data.weightRate || 500;
+          document.getElementById("expressFeeInput").value = data.expressFee || 1000;
+        } else {
+          document.getElementById("baseFeeInput").value = 1500;
+          document.getElementById("weightRateInput").value = 500;
+          document.getElementById("expressFeeInput").value = 1000;
+        }
+      } catch (err) {
+        console.error("Pricing load error:", err);
+      }
+    }
+
+    window.handleSavePricing = async function(e) {
+      e.preventDefault();
+      const baseFee = Number(document.getElementById("baseFeeInput").value);
+      const weightRate = Number(document.getElementById("weightRateInput").value);
+      const expressFee = Number(document.getElementById("expressFeeInput").value);
+
+      const successMsg = document.getElementById("settingSuccess");
+      try {
+        await setDoc(doc(db, "settings", "pricing"), {
+          baseFee,
+          weightRate,
+          expressFee,
+          updatedAt: new Date()
+        }, { merge: true });
+
+        successMsg.innerText = "✅ ဈေးနှုန်း ပြင်ဆင်ပြီးပါပြီ။";
+        successMsg.style.display = "block";
+      } catch (err) {
+        console.error(err);
+        alert("ဈေးနှုန်း ပြင်ဆင်ရာတွင် အမှားဖြစ်ပါသည်: " + err.message);
+      }
+    };
+
+    /* ================= TERMS & CONDITIONS MANAGEMENT ================= */
+    function loadTermsSettings() {
+      const docRef = doc(db, "settings", "terms");
+      if (termsUnsubscribe) termsUnsubscribe();
+      termsUnsubscribe = onSnapshot(docRef, (snap) => {
+        const container = document.getElementById("termsContainer");
+        if (snap.exists() && snap.data().rules && snap.data().rules.length > 0) {
+          const rules = snap.data().rules;
+          container.innerHTML = rules.map((rule) => `
+            <div class="term-item">
+              <span>📌 ${escapeHTML(rule)}</span>
+              <button class="btn-del-term" onclick="deleteTerm('${escapeHTML(rule)}')">ဖျက်မည်</button>
+            </div>
+          `).join("");
+        } else {
+          container.innerHTML = `<div style="text-align:center; color:var(--muted); font-size:12px; padding:10px;">စည်းကမ်းချက်များ မရှိသေးပါ။</div>`;
+        }
+      });
+    }
+
+    window.handleAddTerm = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById("newTermInput");
+      const newRule = input.value.trim();
+      if (!newRule) return;
+
+      try {
+        await setDoc(doc(db, "settings", "terms"), {
+          rules: arrayUnion(newRule)
+        }, { merge: true });
+        input.value = "";
+      } catch (err) {
+        console.error(err);
+        alert("စည်းကမ်းချက် ထည့်သွင်းရာတွင် အမှားဖြစ်ပါသည်: " + err.message);
+      }
+    };
+
+    window.deleteTerm = async function(ruleText) {
+      if (!confirm(`⚠️ "${ruleText}" စည်းကမ်းချက်ကို ဖျက်ရန် သေချာပါသလား?`)) return;
+      try {
+        await updateDoc(doc(db, "settings", "terms"), {
+          rules: arrayRemove(ruleText)
+        });
+      } catch (err) {
+        console.error(err);
+        alert("စည်းကမ်းချက် ဖျက်ရာတွင် အမှားဖြစ်ပါသည်: " + err.message);
+      }
+    };
+
+    /* ================= RENDER ORDERS ================= */
+    function renderOrders(orders) {
+      const ordersList = document.getElementById("ordersList");
+
+      if (orders.length === 0) {
+        ordersList.innerHTML = `
+          <div class="no-data">
+            📭 Order မတွေ့ပါ။ <br>
+            <small>Search သို့မဟုတ် Filter ကို ပြန်စစ်ပါ။</small>
+          </div>
+        `;
+        return;
+      }
+
+      ordersList.innerHTML = orders.map(item => {
+        const status = item.status || "Pending";
+        let statusClass = "status-pending";
+        let statusText = "⏳ Pending";
+
+        if (status === "In Transit" || status === "Transfer") { statusClass = "status-transit"; statusText = "🚚 Transfer / In Transit"; }
+        if (status === "Completed") { statusClass = "status-completed"; statusText = "✅ Completed"; }
+        if (status === "Cancelled") { statusClass = "status-cancelled"; statusText = "❌ Cancelled"; }
+
+        let dateText = "";
+        try {
+          if (item.createdAt?.toDate) {
+            dateText = item.createdAt.toDate().toLocaleString("my-MM");
+          }
+        } catch (e) { dateText = ""; }
+
+        const senderPhone = escapeHTML(item.senderPhone || "");
+        const receiverPhone = escapeHTML(item.receiverPhone || "");
+
+        return `
+          <div class="order-card">
+            <div class="order-head">
+              <div>
+                <div class="order-id">
+                  🆔 ${escapeHTML(item.id || "N/A")}
+                  <span class="platform">(${escapeHTML(item.platform || "WEB")})</span>
+                </div>
+                <div class="status-badge ${statusClass}">${statusText}</div>
+              </div>
+              <div class="order-price">${escapeHTML(item.price || "0 ကျပ်")}</div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-row">
+                <span class="label">📤 ပေးပို့သူ</span>
+                <span class="value">
+                  ${escapeHTML(item.senderName || "-")} <br>
+                  ${senderPhone || "-"}
+                  ${senderPhone ? `<a href="tel:${senderPhone}" class="call-btn">📞 ခေါ်မည်</a>` : ""}
+                </span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">📍 Pickup</span>
+                <span class="value">${escapeHTML(item.pickup || "-")}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">📥 လက်ခံသူ</span>
+                <span class="value">
+                  ${escapeHTML(item.receiverName || "-")} <br>
+                  ${receiverPhone || "-"}
+                  ${receiverPhone ? `<a href="tel:${receiverPhone}" class="call-btn">📞 ခေါ်မည်</a>` : ""}
+                </span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">📍 Delivery</span>
+                <span class="value">${escapeHTML(item.dropoff || "-")}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">📦 ပစ္စည်း</span>
+                <span class="value">
+                  ${escapeHTML(item.itemType || "-")}
+                  ${item.weight ? ` (${escapeHTML(item.weight)})` : ""}
+                </span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">💳 ငွေချေစနစ်</span>
+                <span class="value">${escapeHTML(item.paymentType || "-")}</span>
+              </div>
+
+              ${String(item.paymentType || '').toUpperCase().includes('COD') ? `
+              <div class="info-row">
+                <span class="label">💰 COD ပစ္စည်းတန်ဖိုး</span>
+                <span class="value">
+                  <input type="number" id="codAmount-${escapeHTML(item.docId)}" value="${item.codAmount != null ? Number(item.codAmount) : ''}" min="0" step="1" inputmode="numeric" style="width:130px;padding:7px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:#111827;color:#fff;">
+                  <button class="copy-id" style="margin-left:5px;" onclick="updateCodAmount('${escapeHTML(item.docId)}')">💾 သိမ်းမည်</button>
+                </span>
+              </div>` : ''}
+
+              <div class="info-row delivery-man-editor">
+                <span class="label">🚚 Delivery Man အမည်</span>
+                <span class="value">
+                  <input type="text" id="deliveryManName-${escapeHTML(item.docId)}" value="${escapeHTML(item.deliveryManName || '')}" placeholder="Delivery Man အမည်" maxlength="80" style="width:170px;padding:7px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:#111827;color:#fff;">
+                </span>
+              </div>
+              <div class="info-row delivery-man-editor">
+                <span class="label">📞 Delivery Man ဖုန်း</span>
+                <span class="value">
+                  <input type="tel" id="deliveryManPhone-${escapeHTML(item.docId)}" value="${escapeHTML(item.deliveryManPhone || '')}" placeholder="09xxxxxxxxx" maxlength="20" inputmode="tel" style="width:170px;padding:7px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:#111827;color:#fff;">
+                  <button class="copy-id" style="margin-left:5px;" onclick="updateDeliveryMan('${escapeHTML(item.docId)}')">💾 သိမ်းမည်</button>
+                </span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">📝 မှတ်ချက်</span>
+                <span class="value">${escapeHTML(item.note || "မရှိပါ")}</span>
+              </div>
+            </div>
+
+            ${dateText ? `<div class="order-date">🕒 ${dateText}</div>` : ""}
+
+            <div class="action-bar">
+              <select class="status-select" onchange="updateOrderStatus('${escapeHTML(item.docId)}', this.value, this)">
+                <option value="Pending" ${status === "Pending" ? "selected" : ""}>⏳ Pending</option>
+                <option value="In Transit" ${status === "In Transit" || status === "Transfer" ? "selected" : ""}>🚚 Transfer</option>
+                <option value="Completed" ${status === "Completed" ? "selected" : ""}>✅ Completed</option>
+                <option value="Cancelled" ${status === "Cancelled" ? "selected" : ""}>❌ Cancelled</option>
+              </select>
+              <button class="btn-delete" onclick="deleteOrderDoc('${escapeHTML(item.docId)}')">🗑️ ဖျက်မည်</button>
+            </div>
+            <div class="quick-actions">
+              <button class="quick-btn ${status === "Pending" ? "active" : ""}" onclick="updateOrderStatus('${escapeHTML(item.docId)}','Pending')">⏳ Pending</button>
+              <button class="quick-btn ${status === "In Transit" || status === "Transfer" ? "active" : ""}" onclick="updateOrderStatus('${escapeHTML(item.docId)}','In Transit')">🚚 Transfer</button>
+              <button class="quick-btn ${status === "Completed" ? "active" : ""}" onclick="updateOrderStatus('${escapeHTML(item.docId)}','Completed')">✅ Complete</button>
+              <button class="quick-btn cancel ${status === "Cancelled" ? "active" : ""}" onclick="updateOrderStatus('${escapeHTML(item.docId)}','Cancelled')">❌ Cancel</button>
+            </div>
+            <div class="quick-actions" style="margin-top:6px;">
+              <button class="quick-btn ${item.collectedAt ? "active" : ""}" onclick="markOrderTime('${escapeHTML(item.docId)}','collectedAt')">
+                📥 ${item.collectedAt ? "ကောက်ခံချိန် ပြန်မှတ်မည်" : "Order ကောက်ခံချိန်"}
+              </button>
+              <button class="quick-btn ${item.deliveredAt ? "active" : ""}" onclick="markOrderTime('${escapeHTML(item.docId)}','deliveredAt')">
+                🚚 ${item.deliveredAt ? "ပို့ပြီးချိန် ပြန်မှတ်မည်" : "လက်ခံသူဆီ ပို့ပြီးချိန်"}
+              </button>
+            </div>
+            <div class="order-tools">
+              <span class="status-help">Customer ဘက်မှာ Status ပြောင်းလဲမှုကို Realtime ပြပါမယ်။</span>
+              <button class="copy-id" onclick="copyOrderId('${escapeHTML(item.id || "")}')">📋 ID Copy</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    /* ================= SEARCH + FILTER ================= */
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
+
+    function applyFilters() {
+      const search = document.getElementById("searchInput").value.toLowerCase().trim();
+
+      const filtered = allOrders.filter(item => {
+        const status = item.status || "Pending";
+        const matchesStatus = currentFilter === "all" || status === currentFilter;
+
+        const searchable = [
+          item.id,
+          item.senderName,
+          item.senderPhone,
+          item.receiverName,
+          item.receiverPhone,
+          item.pickup,
+          item.dropoff
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        const matchesSearch = searchable.includes(search);
+        return matchesStatus && matchesSearch;
+      });
+
+      document.getElementById("clearSearch").style.display = search ? "block" : "none";
+      renderOrders(filtered);
+    }
+
+    window.setFilter = function(filter, button) {
+      currentFilter = filter;
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+      applyFilters();
+    };
+
+    window.clearSearch = function() {
+      const input = document.getElementById("searchInput");
+      input.value = "";
+      applyFilters();
+      input.focus();
+    };
+
+    /* ================= ORDER EVENT TIMES ================= */
+    window.markOrderTime = async function(docId, field) {
+      const labels = {
+        collectedAt: "📥 Order ကောက်ခံချိန်",
+        deliveredAt: "📦 လက်ခံသူဆီ ပစ္စည်းပို့ပြီးချိန်"
+      };
+      if (!labels[field]) return;
+
+      const order = allOrders.find(item => item.docId === docId);
+      const message = order?.[field]
+        ? `${labels[field]} ရှိပြီးသားပါ။ အခုအချိန်နဲ့ ပြန်မှတ်တမ်းတင်မလား?`
+        : `${labels[field]} ကို အခုအချိန်နဲ့ မှတ်တမ်းတင်မလား?`;
+
+      if (!confirm(message)) return;
+
+      try {
+        await updateDoc(doc(db, "orders", docId), {
+          [field]: serverTimestamp()
+        });
+      } catch (error) {
+        console.error(error);
+        alert("အချိန်မှတ်တမ်းတင်ရာတွင် အမှားဖြစ်ပါသည်။\n\n" + error.message);
+      }
+    };
+
+    /* ================= UPDATE STATUS ================= */
+    window.updateOrderStatus = async function(docId, newStatus, selectElement) {
+      const order = allOrders.find(item => item.docId === docId);
+      const oldStatus = order?.status || "Pending";
+      if (oldStatus === newStatus || (newStatus === "In Transit" && oldStatus === "Transfer")) return;
+
+      if (newStatus === "Cancelled") {
+        const ok = confirm("❌ ဒီ Order ကို Cancel လုပ်မှာ သေချာပါသလား?\n\nCustomer ဘက်မှာ Cancelled လို့ ပြသပါမယ်။");
+        if (!ok) {
+          if (selectElement && order) selectElement.value = (oldStatus === "Transfer" ? "In Transit" : oldStatus);
+          return;
+        }
+      }
+
+      if (selectElement) selectElement.disabled = true;
+      try {
+        const orderRef = doc(db, "orders", docId);
+        const updateData = { status: newStatus };
+
+        if (newStatus === "Completed") {
+          updateData.completedAt = serverTimestamp();
+        } else if (newStatus === "Cancelled") {
+          updateData.cancelledAt = serverTimestamp();
+        }
+
+        await updateDoc(orderRef, updateData);
+      } catch (error) {
+        console.error(error);
+        alert("Status ပြောင်းရာတွင် အမှားဖြစ်နေပါသည်။\n\n" + error.message);
+        if (selectElement && order) selectElement.value = (oldStatus === "Transfer" ? "In Transit" : oldStatus);
+      } finally {
+        if (selectElement) selectElement.disabled = false;
+      }
+    };
+
+    window.copyOrderId = async function(orderId) {
+      if (!orderId) return;
+      try {
+        await navigator.clipboard.writeText(orderId);
+        alert("📋 " + orderId + " ကို Copy လုပ်ပြီးပါပြီ။");
+      } catch (error) {
+        prompt("Order ID ကို Copy လုပ်ပါ:", orderId);
+      }
+    };
+
+    /* ================= COD AMOUNT ================= */
+    window.updateCodAmount = async function(docId) {
+      const input = document.getElementById(`codAmount-${docId}`);
+      if (!input) return;
+      const order = allOrders.find(item => item.docId === docId);
+      if (!String(order?.paymentType || '').toUpperCase().includes('COD')) {
+        alert('ဒီ Order က COD မဟုတ်ပါ။');
+        return;
+      }
+      const value = Number(input.value);
+      if (!Number.isFinite(value) || value < 0) {
+        alert('COD ပစ္စည်းတန်ဖိုးကို မှန်ကန်စွာ ထည့်ပါ။');
+        input.focus();
+        return;
+      }
+      try {
+        await updateDoc(doc(db, 'orders', docId), { codAmount: Math.round(value) });
+        alert('✅ COD ပစ္စည်းတန်ဖိုး သိမ်းပြီးပါပြီ။');
+      } catch (error) {
+        console.error(error);
+        alert('COD ပစ္စည်းတန်ဖိုး သိမ်းရာတွင် အမှားဖြစ်ပါသည်။\n\n' + error.message);
+      }
+    };
+
+    /* ================= DELIVERY MAN ================= */
+    window.updateDeliveryMan = async function(docId) {
+      const nameInput = document.getElementById(`deliveryManName-${docId}`);
+      const phoneInput = document.getElementById(`deliveryManPhone-${docId}`);
+      if (!nameInput || !phoneInput) return;
+
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      if (!name) {
+        alert('Delivery Man အမည် ထည့်ပေးပါ။');
+        nameInput.focus();
+        return;
+      }
+      if (!phone) {
+        alert('Delivery Man ဖုန်းနံပါတ် ထည့်ပေးပါ။');
+        phoneInput.focus();
+        return;
+      }
+      try {
+        await updateDoc(doc(db, 'orders', docId), {
+          deliveryManName: name,
+          deliveryManPhone: phone
+        });
+        alert('✅ Delivery Man အမည် + ဖုန်း သိမ်းပြီးပါပြီ။ Customer ဘက်မှာလည်း Realtime ပြပါမယ်။');
+      } catch (error) {
+        console.error(error);
+        alert('Delivery Man အချက်အလက် သိမ်းရာတွင် အမှားဖြစ်ပါသည်။\n\n' + (error?.message || error));
+      }
+    };
+
+    /* ================= DELETE ORDER ================= */
+    window.deleteOrderDoc = async function(docId) {
+      const confirmed = confirm("⚠️ ဒီ Order ကို အပြီးတိုင်ဖျက်မှာ သေချာပါသလား?\n\nဖျက်ပြီးရင် ပြန်ယူလို့မရတော့ပါ။");
+      if (!confirmed) { return; }
+
+      try {
+        await deleteDoc(doc(db, "orders", docId));
+      } catch (error) {
+        console.error(error);
+        alert("Order ဖျက်ရာတွင် အမှားဖြစ်နေပါသည်။\n\n" + error.message);
+      }
+    };
+  </script>
+</body>
+</html>
